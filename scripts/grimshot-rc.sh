@@ -43,7 +43,8 @@ if [ -f "$PIDFILE" ]; then
     rm -f "$PIDFILE"
     while kill -0 "$PID" 2>/dev/null; do
       sleep 0.2
-    done    paplay "$SOUND" &
+    done
+    paplay "$SOUND" &
     FILE=$(ls -t "$RECORDINGS_DIR"/*.mp4 2>/dev/null | head -1)
     if [ -n "$FILE" ]; then
       PUBLIC_URL=$(uploadToR2 "$FILE")

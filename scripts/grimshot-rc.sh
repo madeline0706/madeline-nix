@@ -34,7 +34,7 @@ upload_to_r2() {
 
 stop_recording() {
   local pid
-  pid=$(grep -rl wf-recorder /proc/*/cmdline 2>/dev/null | grep -v "$$" | head -1 | cut -d/ -f3)
+  pid=$(grep -rl wf-recorder /proc/*/cmdline 2>/dev/null | grep -v '/proc/self\|/proc/thread-self' | head -1 | cut -d/ -f3)
 
   [ -z "$pid" ] && { notify-send -t 3000 -a recorder "Recorder" "No recording found"; exit 1; }
 
@@ -84,7 +84,7 @@ start_recording() {
 }
 
 # Main
-if grep -rl wf-recorder /proc/*/cmdline 2>/dev/null | grep -qv "$$"; then
+if grep -rl wf-recorder /proc/*/cmdline 2>/dev/null | grep -qv '/proc/self\|/proc/thread-self'; then
   stop_recording
 else
   start_recording

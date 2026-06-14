@@ -8,6 +8,7 @@
     waybar
     fastfetch
     git
+    pulsemixer
   ];
 
   imports =
@@ -40,7 +41,7 @@
   # Hey hey thats me
   users.users.madeline = {
     isNormalUser = true;
-    extraGroups = [ "wheel" ];
+    extraGroups = [ "wheel" "video" ];
     packages = with pkgs; [
       tree
     ];

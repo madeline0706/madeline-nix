@@ -29,11 +29,13 @@
       bindsym $mod+Shift+e exit
       # Reload
       bindsym $mod+r reload
-      # Volume controls
-      bindsym $mod+Up exec pulsemixer --change-volume +5
-      bindsym $mod+Down exec pulsemixer --change-volume -5
-      bindsym $mod+Shift+Up exec pulsemixer --change-volume +1
-      bindsym $mod+Shift+Down exec pulsemixer --change-volume -1
+      # Brightness keys
+      bindsym XF86MonBrightnessUp exec brightnessctl set 5%+
+      bindsym XF86MonBrightnessDown exec brightnessctl set 5%-
+      # Media keys
+      bindsym XF86AudioRaiseVolume exec wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+
+      bindsym XF86AudioLowerVolume exec wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-
+      bindsym XF86AudioMute exec wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle
       # Autostart
       exec foot
       # Workspaces — switch

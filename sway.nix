@@ -59,6 +59,11 @@
       for_window [class=".*"] inhibit_idle fullscreen
       for_window [app_id=".*"] inhibit_idle fullscreen
       exec foot
+      # Navigation
+      bindsym $mod+left focus left
+      bindsym $mod+down focus down
+      bindsym $mod+up focus up
+      bindsym $mod+right focus right
       # Workspaces — switch
       bindsym $mod+1 workspace number 1
       bindsym $mod+2 workspace number 2

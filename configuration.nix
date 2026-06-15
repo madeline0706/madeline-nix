@@ -2,6 +2,7 @@
 
 { config, lib, pkgs, ... }:
 {
+  security.pam.services.waylock = {};
   programs.sway.enable = true;
   services.displayManager.ly.enable = true;
   environment.systemPackages = with pkgs; [

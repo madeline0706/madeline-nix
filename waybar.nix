@@ -55,7 +55,7 @@
           format-paused = "= {artist} — {title}";
         };
         "custom/sysinfo" = {
-          exec = "${./scripts/sysinf.sh}";
+          exec = "${pkgs.writeShellScript "sysinfo" (builtins.readFile ./scripts/sysinf.sh)}";
           interval = 1;
           return-type = "";
           format = "{}";

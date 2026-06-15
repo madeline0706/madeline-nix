@@ -15,6 +15,8 @@
     chafa
     file
     portablemc
+    waybar
+    fastfetch
   ];
   xdg.configFile."xdg-desktop-portal-termfilechooser/config".text = ''
     [filechooser]

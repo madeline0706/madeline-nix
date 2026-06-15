@@ -71,8 +71,6 @@
 
   # Global packages
   environment.systemPackages = with pkgs; [
-    waybar
-    fastfetch
     git
     pulsemixer
     tailscale

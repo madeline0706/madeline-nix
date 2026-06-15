@@ -33,6 +33,7 @@
       bindsym $mod+r reload
       # Lock screen
       bindsym $mod+Escape exec waylock
+      bindsym $mod+l exec waylock
       # Brightness keys
       bindsym XF86MonBrightnessUp exec brightnessctl set 5%+
       bindsym XF86MonBrightnessDown exec brightnessctl set 5%-

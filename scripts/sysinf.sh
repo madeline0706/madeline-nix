@@ -1,26 +1,39 @@
 #!/bin/bash
+set -euo pipefail
 
-# CPU
-cpu_idle=$(awk '/^cpu / {print $5}' /proc/stat)
-cpu_total=$(awk '/^cpu / {total=0; for(i=2;i<=NF;i++) total+=$i; print total}' /proc/stat)
-cpu_idle_prev=$(cat /tmp/waybar_cpu_idle_prev 2>/dev/null || echo "$cpu_idle")
-cpu_total_prev=$(cat /tmp/waybar_cpu_total_prev 2>/dev/null || echo "$cpu_total")
-echo "$cpu_idle"  > /tmp/waybar_cpu_idle_prev
-echo "$cpu_total" > /tmp/waybar_cpu_total_prev
+STATE_DIR="/tmp/waybar_stats"
+mkdir -p "$STATE_DIR"
+
+# Read /proc/stat once
+read -r _ cpu_user cpu_nice cpu_system cpu_idle cpu_iowait cpu_irq cpu_softirq cpu_steal _ < <(grep '^cpu ' /proc/stat)
+cpu_total=$(( cpu_user + cpu_nice + cpu_system + cpu_idle + cpu_iowait + cpu_irq + cpu_softirq + cpu_steal ))
+
+cpu_idle_prev=$(cat "$STATE_DIR/cpu_idle" 2>/dev/null || echo 0)
+cpu_total_prev=$(cat "$STATE_DIR/cpu_total" 2>/dev/null || echo 0)
+echo "$cpu_idle"  > "$STATE_DIR/cpu_idle"
+echo "$cpu_total" > "$STATE_DIR/cpu_total"
+
+# Sanitize: ensure numeric, default 0
+[[ "$cpu_idle_prev"  =~ ^[0-9]+$ ]] || cpu_idle_prev=0
+[[ "$cpu_total_prev" =~ ^[0-9]+$ ]] || cpu_total_prev=0
+
 cpu_delta=$(( cpu_total - cpu_total_prev ))
 cpu_idle_delta=$(( cpu_idle - cpu_idle_prev ))
-[ "$cpu_delta" -gt 0 ] && cpu_pct=$(( (cpu_delta - cpu_idle_delta) * 100 / cpu_delta )) || cpu_pct=0
 
-# RAM
-ram_total_kb=$(awk '/^MemTotal/     {print $2}' /proc/meminfo)
-ram_avail_kb=$(awk '/^MemAvailable/ {print $2}' /proc/meminfo)
+if [ "$cpu_delta" -gt 0 ] && [ "$cpu_idle_delta" -ge 0 ] && [ "$cpu_idle_delta" -le "$cpu_delta" ]; then
+    cpu_pct=$(( (cpu_delta - cpu_idle_delta) * 100 / cpu_delta ))
+else
+    cpu_pct=0
+fi
+
+# RAM (single read)
+read -r ram_total_kb ram_avail_kb < <(awk '/^MemTotal/{t=$2} /^MemAvailable/{a=$2} END{print t, a}' /proc/meminfo)
 ram_used_kb=$(( ram_total_kb - ram_avail_kb ))
 ram_pct=$(( ram_used_kb * 100 / ram_total_kb ))
 
-# DISK
-disk_used_kb=$(df -k / | awk 'NR==2 {print $3}')
-disk_total_kb=$(df -k / | awk 'NR==2 {print $2}')
-disk_pct=$(df -k / | awk 'NR==2 {print $5}' | tr -d '%')
+# DISK (single df call)
+read -r disk_total_kb disk_used_kb disk_pct_raw < <(df -k / | awk 'NR==2 {gsub("%","",$5); print $2, $3, $5}')
+disk_pct=$disk_pct_raw
 
 # HUMAN READABLE
 kb_to_human() {
@@ -33,26 +46,35 @@ kb_to_human() {
         printf "%dMB" $(( kb / 1024 ))
     fi
 }
-
 ram_used_fmt=$(kb_to_human "$ram_used_kb")
 disk_used_fmt=$(kb_to_human "$disk_used_kb")
 
 # NETWORK
-iface=$(ip route get 1.1.1.1 2>/dev/null | awk '/dev/ {for(i=1;i<=NF;i++) if($i=="dev") print $(i+1)}' | head -1)
-rx_now=$(cat /sys/class/net/${iface}/statistics/rx_bytes 2>/dev/null || echo 0)
-tx_now=$(cat /sys/class/net/${iface}/statistics/tx_bytes 2>/dev/null || echo 0)
+iface=$(ip route get 1.1.1.1 2>/dev/null | awk '/dev/ {for(i=1;i<=NF;i++) if($i=="dev") print $(i+1); exit}')
+rx_now=$(cat "/sys/class/net/${iface}/statistics/rx_bytes" 2>/dev/null || echo 0)
+tx_now=$(cat "/sys/class/net/${iface}/statistics/tx_bytes" 2>/dev/null || echo 0)
 ts_now=$(date +%s%3N)
-rx_prev=$(cat /tmp/waybar_rx 2>/dev/null || echo "$rx_now")
-tx_prev=$(cat /tmp/waybar_tx 2>/dev/null || echo "$tx_now")
-ts_prev=$(cat /tmp/waybar_ts 2>/dev/null || echo "$ts_now")
-echo "$rx_now" > /tmp/waybar_rx
-echo "$tx_now" > /tmp/waybar_tx
-echo "$ts_now" > /tmp/waybar_ts
+
+rx_prev=$(cat "$STATE_DIR/rx" 2>/dev/null || echo "$rx_now")
+tx_prev=$(cat "$STATE_DIR/tx" 2>/dev/null || echo "$tx_now")
+ts_prev=$(cat "$STATE_DIR/ts" 2>/dev/null || echo "$ts_now")
+
+[[ "$rx_prev" =~ ^[0-9]+$ ]] || rx_prev=$rx_now
+[[ "$tx_prev" =~ ^[0-9]+$ ]] || tx_prev=$tx_now
+[[ "$ts_prev" =~ ^[0-9]+$ ]] || ts_prev=$ts_now
+
+echo "$rx_now" > "$STATE_DIR/rx"
+echo "$tx_now" > "$STATE_DIR/tx"
+echo "$ts_now" > "$STATE_DIR/ts"
+
 elapsed_ms=$(( ts_now - ts_prev ))
-if [ "$elapsed_ms" -gt 100 ]; then
-    rx_mbps="$(( (rx_now - rx_prev) * 8 / 1000000 * 1000 / elapsed_ms )).0"
-    tx_mbps="$(( (tx_now - tx_prev) * 8 / 1000000 * 1000 / elapsed_ms )).0"
-    total_mbps=$(( (rx_now - rx_prev + tx_now - tx_prev) * 8 / 1000000 * 1000 / elapsed_ms ))
+rx_diff=$(( rx_now - rx_prev ))
+tx_diff=$(( tx_now - tx_prev ))
+
+if [ "$elapsed_ms" -gt 100 ] && [ "$rx_diff" -ge 0 ] && [ "$tx_diff" -ge 0 ]; then
+    rx_mbps="$(( rx_diff * 8 / 1000000 * 1000 / elapsed_ms )).0"
+    tx_mbps="$(( tx_diff * 8 / 1000000 * 1000 / elapsed_ms )).0"
+    total_mbps=$(( (rx_diff + tx_diff) * 8 / 1000000 * 1000 / elapsed_ms ))
 else
     rx_mbps="0.0"; tx_mbps="0.0"; total_mbps=0
 fi
@@ -76,5 +98,5 @@ else                                  net_color="#cc3333"
 fi
 
 # OUTPUT
-printf "<span color='$cpu_color'>%-4s</span>  <span color='$ram_color'>%-9s</span>  <span color='$disk_color'>%-8s</span>  <span color='$net_color'>↑ %-7s ↓ %-7s</span>\n" \
-    "${cpu_pct}%" "$ram_used_fmt" "$disk_used_fmt" "$tx_mbps" "$rx_mbps"
+printf "<span color='%s'>%-4s</span>  <span color='%s'>%-9s</span>  <span color='%s'>%-8s</span>  <span color='%s'>↑ %-7s ↓ %-7s</span>\n" \
+    "$cpu_color" "${cpu_pct}%" "$ram_color" "$ram_used_fmt" "$disk_color" "$disk_used_fmt" "$net_color" "$tx_mbps" "$rx_mbps"

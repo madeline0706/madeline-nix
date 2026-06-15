@@ -24,7 +24,7 @@ Minimal, with as much TUI as possible!
 
 Populate:
 ```
-R2_ACCOUNT_ID='"
+R2_ACCOUNT_ID=""
 R2_BUCKET=""
 R2_PUBLIC_BASE_URL=""
 R2_PREFIX=""

@@ -14,6 +14,7 @@
     xdg-desktop-portal-termfilechooser
     chafa
     file
+    portablemc
   ];
   xdg.configFile."xdg-desktop-portal-termfilechooser/config".text = ''
     [filechooser]

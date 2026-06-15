@@ -6,7 +6,7 @@
     ./hardware-configuration.nix
   ];
 
-  # Boat
+  # Boot
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
 
@@ -14,6 +14,13 @@
   hardware.cpu.amd.updateMicrocode = true;
   hardware.enableRedistributableFirmware = true;
   hardware.bluetooth.enable = false;
+
+  # Not needed right now
+  services.printing.enable = false;
+  services.avahi.enable = false;
+  services.geoclue2.enable = false;
+  documentation.nixos.enable = false;
+  documentation.man.enable = false;
 
   # Power management
   services.tlp = {

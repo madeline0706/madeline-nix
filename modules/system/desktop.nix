@@ -9,6 +9,20 @@
     waybar
     fastfetch
     git
+    arrpc
+    lf
+    bemenu
+    j4-dmenu-desktop
+    swayidle
+    waylock
+    xdg-desktop-portal-termfilechooser
+    chafa
+    file
+    portablemc
+    waybar
+    fastfetch
+    btop
+    ncdu
   ];
 
   xdg.portal = {

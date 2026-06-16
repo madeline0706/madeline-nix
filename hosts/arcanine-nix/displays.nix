@@ -1,9 +1,6 @@
 { ... }:
 {
-  wayland.windowManager.sway.config.output = {
-    "eDP-1" = {
-      resolution = "1920x1200";
-      mode = "60";
-    };
-  };
+  wayland.windowManager.sway.extraConfig = ''
+    output eDP-1 mode 1920x1200@60Hz
+  '';
 }

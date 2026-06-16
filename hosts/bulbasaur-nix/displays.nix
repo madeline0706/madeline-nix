@@ -1,9 +1,6 @@
 { ... }:
 {
-  wayland.windowManager.sway.config.output = {
-    "DP-3" = {
-      resolution = "2560x1440";
-      mode = "240";
-    };
-  };
+  wayland.windowManager.sway.extraConfig = ''
+    output DP-3 mode 2560x1440@240Hz
+  '';
 }

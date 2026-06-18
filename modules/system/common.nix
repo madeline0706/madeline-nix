@@ -29,6 +29,9 @@
       git commit -m "''${1:-Update config}" && \
       git push
     }
+    mc() {
+      portablemc start -au madeline0706 "''${1:?Usage: mc <version>}"
+    }
   '';
   boot.kernelPackages = pkgs.linuxPackages_cachyos;
   nixpkgs.config.allowUnfree = true;

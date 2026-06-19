@@ -119,12 +119,10 @@ notifyOk() {
   notify_disabled='[ "$NOTIFY" = "no" ]'
   action_involves_saving='[ "$ACTION" = "save" ] || [ "$ACTION" = "savecopy" ]'
   if eval $notify_disabled; then
-    paplay "$SOUND" &
     return
   fi
   TITLE=${2:-"Screenshot"}
   MESSAGE=${1:-"OK"}
-  paplay "$SOUND" &
   whenOtherwise "$action_involves_saving" \
     'notify "$TITLE" "$MESSAGE" -i "$FILE"' \
     'notify "$TITLE" "$MESSAGE"'

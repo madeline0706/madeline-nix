@@ -13,9 +13,8 @@ in
 
   wayland.windowManager.sway = {
     enable = true;
-    checkConfig = false;
     config = {
-      modifier = "Mod1";
+      modifier = "Mod4";
       
       defaultWorkspace = "1";
 
@@ -51,7 +50,7 @@ in
         };
       };
 
-      keybindings = let mod = "Mod1"; in {
+      keybindings = let mod = "Mod4"; in {
         # App launcher
         "${mod}+m" = "exec j4-dmenu-desktop --dmenu=\"bemenu -l 10 -p run: --fn 'Terminus 12' -c --width-factor 0.3 --nb '#000000ff' --hb '#000000ff' --fb '#000000ff'\"";
         # Terminal
@@ -113,7 +112,7 @@ in
       startup = [
         { command = "${random-wallpaper}/bin/random-wallpaper"; always = true; }
         { command = "arrpc"; }
-        { command = "swayidle timeout 180 'waylock' timeout 900 'systemctl suspend' timeout 3600 'systemctl poweroff' before-sleep 'waylock' resume 'swaymsg \"output * dpms on\"'"; }
+        { command = "swayidle timeout 180 'waylock' timeout 900 'systemctl suspend' before-sleep 'waylock' resume 'swaymsg \"output * dpms on\"'"; }
         { command = "foot"; }
       ];
 

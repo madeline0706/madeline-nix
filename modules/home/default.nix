@@ -22,6 +22,7 @@
     fastfetch
     btop
     ncdu
+    pulsemixer
   ];
 
   xdg.configFile."xdg-desktop-portal-termfilechooser/config".text = ''
@@ -38,7 +39,7 @@
       save="$3"
       path="$4"
       out="$5"
-      foot --app-id=filechooser -- sh -c "LF_CHOOSER_FILE='$out' lf '$path'"
+      foot --app-id=filechooser -- sh -c 'LF_CHOOSER_FILE="$1" lf "$2"' -- "$out" "$path"
     '';
   };
 

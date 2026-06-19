@@ -13,8 +13,6 @@
   hardware.cpu.amd.updateMicrocode = true;
   hardware.bluetooth.enable = false;
 
-  services.tailscale.enable = true;
-
   services.tlp = {
     enable = true;
     settings = {
@@ -29,9 +27,9 @@
 
   services.power-profiles-daemon.enable = false;
 
-  services.logind.settings.Login = {
-    HandleLidSwitch = "suspend";
-    HandleLidSwitchExternalPower = "lock";
-    HandleLidSwitchDocked = "ignore";
-  };
+  services.logind.lidSwitch = "suspend";
+  services.logind.lidSwitchExternalPower = "lock";
+  services.logind.lidSwitchDocked = "ignore";
+
+  swapDevices = [{ device = "/var/swap"; size = 8192; }];
 }

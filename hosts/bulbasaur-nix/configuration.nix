@@ -13,8 +13,6 @@
 
   programs.steam.enable = true;
 
-  nixpkgs.config.allowUnfree = true;
-
   # DRM Log noise in Ly
   boot.consoleLogLevel =3;
   # AMD GPU

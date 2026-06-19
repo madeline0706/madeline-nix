@@ -39,10 +39,9 @@
   ];
 
   xdg.configFile."mprisence/config.toml".text = ''
-    [web_player.navidrome]
-    match_pattern = "navi.spellbound.sh"
-    name = "Navidrome"
+    [player.mozilla_firefox]
     ignore = false
+    name = "Navidrome"
   '';
 
   xdg.configFile."xdg-desktop-portal-termfilechooser/config".text = ''

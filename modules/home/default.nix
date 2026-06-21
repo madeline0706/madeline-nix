@@ -1,4 +1,22 @@
-{ config, pkgs, ... }:
+{ config, pkgs, lib, ... }:
+let
+  mprisSrc = pkgs.fetchFromGitHub {
+    owner = "lazykern";
+    repo = "mprisence";
+    rev = "v1.7.0";
+    hash = "sha256-Ss6RXxtpSI3jfq5CAwRLE0XA3tFkIBI+JMyUov2DSpM=";
+  };
+  mprisence = pkgs.mprisence.overrideAttrs (old: {
+    version = "1.7.0";
+    src = mprisSrc;
+    cargoDeps = pkgs.rustPlatform.fetchCargoVendor {
+      inherit (old) pname;
+      version = "1.7.0";
+      src = mprisSrc;
+      hash = "sha256-AKj+DibLyoWUw+082m5wMVnZAY4Kmf3+daRJDGeLKtc=";
+    };
+  });
+in
 {
   home.stateVersion = "26.05";
 
@@ -8,7 +26,7 @@
     Unit.Description = "Discord Rich Presence for MPRIS media players";
     Service = {
       Type = "simple";
-      ExecStart = "${pkgs.mprisence}/bin/mprisence";
+      ExecStart = "${mprisence}/bin/mprisence";
       Restart = "always";
       RestartSec = 10;
       Environment = [ "RUST_LOG=info" "RUST_BACKTRACE=1" ];

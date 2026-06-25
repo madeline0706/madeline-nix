@@ -11,13 +11,13 @@
         min-height: 0;
       }
       window#waybar {
-        background-color: #0a0a0a;
+        background-color: rgba(10, 10, 10, 0.75);
         color: #fff8e1;
       }
       #clock, #pulseaudio, #network, #workspaces, #custom-sysinfo, #battery, #mpris {
         padding: 0 10px;
         color: #fff8e1;
-        background-color: #0a0a0a;
+        background-color: rgba(10, 10, 10, 0.75);
       }
       #workspaces button {
         color: #fff8e1;

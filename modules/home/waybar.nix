@@ -32,7 +32,6 @@
       }
       #battery.critical {
         color: #e6001a;
-        font-weight: bold;
       }
     '';
     settings = {
@@ -48,17 +47,17 @@
           tooltip-format = "<tt>{calendar}</tt>";
         };
         network = {
-          format-ethernet = "ETHR";
-          format-wifi = "WIFI {signalStrength}%";
-          format-disconnected = "DISCONNECTED";
+          format-ethernet = "ETH";
+          format-wifi = "WIF {signalStrength}%";
+          format-disconnected = "DIS";
         };
         pulseaudio = {
-          format = "VLME {volume}%";
+          format = "VOL {volume}%";
           format-muted = "MUTED";
           on-click = "foot -e pulsemixer";
         };
         battery = {
-          format = "BATR {capacity}%";
+          format = "BAT {capacity}%";
           format-charging = "CHRG {capacity}%";
           format-warning = "WARN {capacity}%";
           format-critical = "CRIT {capacity}%";

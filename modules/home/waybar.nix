@@ -12,15 +12,15 @@
       }
       window#waybar {
         background-color: rgba(10, 10, 10, 0.75);
-        color: #1c1a0d;
+        color: #c8c4b0;
       }
       #clock, #pulseaudio, #network, #workspaces, #custom-sysinfo, #battery, #mpris {
         padding: 0 10px;
-        color: #1c1a0d;
+        color: #c8c4b0;
         background-color: transparent;
       }
       #workspaces button {
-        color: #1c1a0d;
+        color: #c8c4b0;
         padding: 0 5px;
         background-color: transparent;
       }

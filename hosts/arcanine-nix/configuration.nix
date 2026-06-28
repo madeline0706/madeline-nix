@@ -11,6 +11,7 @@
   # Stuff for my Pi 5
   boot.binfmt.emulatedSystems = [ "aarch64-linux" ]; #to build pi 5 image
   nix.settings.trusted-users = [ "madeline" ];
+  nix.settings.extra-platforms = [ "aarch64-linux" ];
   networking.hostName = "arcanine-nix";
 
   hardware.cpu.amd.updateMicrocode = true;
